@@ -34,6 +34,12 @@ import com.bottleworks.dailymoney.data.Detail;
 import com.bottleworks.dailymoney.data.IDataProvider;
 import com.bottleworks.dailymoney.ui.AccountUtil.IndentNode;
 
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Toast;
+import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import net.sourceforge.zbar.Symbol;
 /**
  * Edit or create a detail
  * 
@@ -44,7 +50,8 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
     
     public static final String INTENT_MODE_CREATE = "modeCreate";
     public static final String INTENT_DETAIL = "detail";
-   
+    private static final int ZBAR_SCANNER_REQUEST = 0;
+    private static final int ZBAR_QR_SCANNER_REQUEST = 1;   
     
     private boolean modeCreate;
     private int counterCreate;
@@ -142,7 +149,8 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
             findViewById(R.id.deteditor_datepicker).setOnClickListener(this);
         }
         findViewById(R.id.deteditor_cal2).setOnClickListener(this);
-
+        findViewById(R.id.deteditor_QR).setOnClickListener(this);
+        
         okBtn = (Button) findViewById(R.id.deteditor_ok);
         if (modeCreate) {
             okBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_add, 0, 0, 0);
@@ -366,6 +374,10 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
             }
         } else if (v.getId() == R.id.deteditor_cal2) {
             doCalculator2();
+        } else if (v.getId() == R.id.deteditor_QR) {
+        	Intent intent = new Intent(this, ZBarScannerActivity.class);
+        	intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
+        	startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
         }
     }
     
