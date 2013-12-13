@@ -149,7 +149,9 @@
     <string name="label_prefs_passwordvd">密碼保護-2</string>
     <string name="label_prefs_passwordvd_sum">輸入相同的密碼來啟動密碼保護</string>
     <string name="title_pdprotection">密碼保護</string>
-    <string name="msg_wrong_password">錯誤的密碼!</string>    
+    <string name="msg_wrong_password">錯誤的密碼!</string>
+    
+    <string name="msg_password_sent">信件已寄送!</string>
     
     
     <string name="act_balance_detlist">明細清單</string>

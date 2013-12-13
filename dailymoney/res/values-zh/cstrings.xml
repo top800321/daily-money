@@ -25,6 +25,9 @@
     <string name="cact_edit">編輯</string>
     <string name="cact_new">新增</string>
     <string name="cact_ok">確定</string>
+    
+    <string name="cact_forgot">忘記密碼？</string>
+    
     <string name="cact_stop">停止</string>
     <string name="cact_update">更新</string>
     <string name="clabel_alert">警告</string>
