@@ -76,6 +76,9 @@ public class Contexts {
     final String workingFolder = "bwDailyMoney";//readonly since 0.9.8
     boolean pref_backupCSV = true;
     String pref_password = "";
+    
+    String pref_backup_password = "";
+    
     boolean pref_allowAnalytics = true;
     String pref_csvEncoding = "UTF8";
     boolean pref_hierarachicalReport = true;
@@ -466,6 +469,10 @@ public class Contexts {
         calendarHelper.setStartDayOfMonth(getPrefStartdayMonth());
     }
     
+    public void reloadBackUpPassword(String backup) {
+    	pref_backup_password=backup;
+    }
+    
     public int getWorkingBookId(){
         return pref_workingBookId;
     }
@@ -483,6 +490,10 @@ public class Contexts {
     
     public String getPrefPassword(){
         return pref_password;
+    }
+    
+    public String getBackUpPassword(){
+        return pref_backup_password;
     }
     
     public boolean isPrefAllowAnalytics(){

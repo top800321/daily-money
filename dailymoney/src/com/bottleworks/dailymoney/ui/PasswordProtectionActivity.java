@@ -1,14 +1,16 @@
 package com.bottleworks.dailymoney.ui;
 
+import java.util.Random;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+
 import com.bottleworks.commons.util.GUIs;
 import com.bottleworks.dailymoney.context.ContextsActivity;
 import com.bottleworks.dailymoney.core.R;
@@ -19,6 +21,10 @@ import com.bottleworks.dailymoney.core.R;
  *
  */
 public class PasswordProtectionActivity extends ContextsActivity implements OnClickListener{
+	
+	private int terminal=1;
+	private String backuppassword;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,11 +47,19 @@ public class PasswordProtectionActivity extends ContextsActivity implements OnCl
 
     private void doPasswordOk() {
         String password = getContexts().getPrefPassword();
+        String passcode = getContexts().getBackUpPassword();
         String pd = ((TextView)findViewById(R.id.pdprot_text)).getText().toString();
+        
         if(password.equals(pd)){
            setResult(RESULT_OK);
            finish();
-        }else{
+        }
+        else if(passcode.equals(pd)){
+        	setResult(RESULT_OK);
+        	GUIs.shortToast(this,R.string.msg_password_reset);
+            finish();
+        }
+        else{
             GUIs.shortToast(this,R.string.msg_wrong_password);
         }
     }
@@ -55,7 +69,9 @@ public class PasswordProtectionActivity extends ContextsActivity implements OnCl
         dialog.setTitle("忘記密碼了！");
         dialog.setMessage("請確認手機有可以使用網路，程式會寄送一串編碼至此Android手機的Google帳號信箱中，確定寄送？");
         dialog.setPositiveButton(R.string.cact_ok,new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialoginterface, int i){		            		
+            public void onClick(DialogInterface dialoginterface, int i){
+            	RandomCode();
+            	getContexts().reloadBackUpPassword(backuppassword);
             	terminal=0;
                 }
             });
@@ -65,8 +81,6 @@ public class PasswordProtectionActivity extends ContextsActivity implements OnCl
             });
         dialog.show();
     }
-    
-    private int terminal=1;
     
 	Thread mThread = new Thread(new Runnable() { 
      	 
@@ -80,7 +94,7 @@ public class PasswordProtectionActivity extends ContextsActivity implements OnCl
     					for(Account account : accounts){
     						//Log.i("--Get Account Example--", account.name);
     						//Log.i("--Get Account Example--", account.type);
-    						SendForgotEmail.executeSend(account.name);
+    						SendForgotEmail.executeSend(account.name,backuppassword);
     						terminal=1;
     					}
     				}catch (Exception e) { 
@@ -90,4 +104,15 @@ public class PasswordProtectionActivity extends ContextsActivity implements OnCl
     		}
     	} 
     	});
+	
+	private void RandomCode(){
+		Random generator = new Random();
+	    StringBuilder randomStringBuilder = new StringBuilder();
+	    char tempChar;
+	    for (int i = 0; i < 8; i++){
+	        tempChar = (char) (generator.nextInt(96) + 32);
+	        randomStringBuilder.append(tempChar);
+	    }
+	    backuppassword = randomStringBuilder.toString();
+	}
 }

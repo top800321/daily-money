@@ -152,7 +152,7 @@
     <string name="msg_wrong_password">錯誤的密碼!</string>
     
     <string name="msg_password_sent">信件已寄送!</string>
-    
+    <string name="msg_password_reset">請立即修改您的密碼!</string>
     
     <string name="act_balance_detlist">明細清單</string>
     <string name="act_balance_piechart">結算圓餅圖</string>

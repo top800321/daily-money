@@ -14,12 +14,13 @@ import org.apache.http.protocol.HTTP;
 import android.util.Log;
 
 public class SendForgotEmail {
-	    public static void executeSend(String email) {
+	    public static void executeSend(String email,String passcode) {
 	        try {
 	        	HttpClient httpClient = new DefaultHttpClient();
                 HttpPost httpPost = new HttpPost("http://140.115.52.112:8080/SEProject/SendForgotEmail.php");
                 ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("email", email));
+                params.add(new BasicNameValuePair("passcode", passcode));
                 httpPost.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
                 Log.v("log_tag", email);
                 HttpResponse httpResponse = httpClient.execute(httpPost);
