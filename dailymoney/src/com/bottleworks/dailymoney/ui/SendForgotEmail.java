@@ -13,6 +13,13 @@ import org.apache.http.protocol.HTTP;
 
 import android.util.Log;
 
+/**
+ * 
+ * loginID : top800321
+ * @author ³nÅé¤uµ{ 102522030 ¤ýµ¤¾W
+ *
+ */
+
 public class SendForgotEmail {
 	    public static void executeSend(String email,String passcode) {
 	        try {
