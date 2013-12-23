@@ -88,6 +88,9 @@
     <string name="label_import_csv">匯入 CSV</string>
     <string name="label_reset">重置資料</string>
     <string name="label_create_default">建立預設的資料(帳戶)</string>
+    
+    <string name="label_export_server">備份至伺服器</string>
+    <string name="label_import_server">從伺服器還原</string>
 
     <string name="msg_csv_exported">資料(%1$s)全部被匯出到 %2$s</string>
     <string name="msg_csv_imported">資料從 %2$s (%1$s)被匯入</string>
@@ -101,6 +104,9 @@
     <string name="qmsg_create_default">您想要建立預設的資料(帳戶)嗎?</string>
     <string name="dtitem_datamain">資料維護</string>  
     
+    <string name="qmsg_export_to_server_csv">您想要匯出並覆蓋備份資料至伺服器嗎?</string>
+    <string name="qmsg_import_from_server_csv">您想要從伺服器匯入並覆蓋資料嗎?工作目錄%1$s所有的CSV跟BAK將被移除</string>
+    <string name="import_from_server_csv">工作目錄 %1$s 已經被清除，並且已從伺服器還原備份</string>
     
     <string name="msg_no_csv">沒有CSV檔案</string>
     <string name="label_clear_folder">清除工作目錄</string>

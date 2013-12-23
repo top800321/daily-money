@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"
 	android:layout_width="fill_parent" android:layout_height="fill_parent" android:padding="5dp">
 	<ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent">
-		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"
+		<LinearLayout android:orientation="vertical"
 			android:layout_gravity="center_horizontal" android:paddingLeft="30dp" android:paddingRight="30dp"
 			android:layout_width="fill_parent" android:layout_height="wrap_content">
 
@@ -28,6 +28,12 @@
 			<Button android:text="@string/label_clear_folder" android:id="@+id/datamain_clear_folder"
 				android:layout_width="fill_parent" android:gravity="center" android:layout_height="wrap_content"
 				android:drawableLeft="@drawable/btn_reset" android:layout_marginBottom="10dp" />
+			
+			<Button android:text="@string/label_export_server" android:id="@+id/datamain_export_server" android:layout_width="fill_parent"
+				android:gravity="center" android:layout_height="wrap_content" android:drawableLeft="@drawable/btn_share"/>
+			<Button android:text="@string/label_import_server" android:id="@+id/datamain_import_server"
+				android:layout_width="fill_parent" android:gravity="center" android:layout_height="wrap_content"
+				android:drawableLeft="@drawable/btn_defdata" android:layout_marginBottom="10dp" />
 		</LinearLayout>
 	</ScrollView>
 </LinearLayout>
