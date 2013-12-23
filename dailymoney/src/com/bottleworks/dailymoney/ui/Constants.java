@@ -39,4 +39,8 @@ public class Constants {
     public static final String PREFS_LAST_BACKUP = "last_backup";
     
     public static final String BACKUP_JOB = "backup_job";
+    
+    public static final int ZBAR_SCANNER_REQUEST = 0;    //QRcode scanner value set
+    public static final int ZBAR_QR_SCANNER_REQUEST = 1;   
+    
 }

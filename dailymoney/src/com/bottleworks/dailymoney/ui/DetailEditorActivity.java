@@ -50,8 +50,6 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
     
     public static final String INTENT_MODE_CREATE = "modeCreate";
     public static final String INTENT_DETAIL = "detail";
-    private static final int ZBAR_SCANNER_REQUEST = 0;
-    private static final int ZBAR_QR_SCANNER_REQUEST = 1;   
     
     private boolean modeCreate;
     private int counterCreate;
@@ -375,12 +373,19 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         } else if (v.getId() == R.id.deteditor_cal2) {
             doCalculator2();
         } else if (v.getId() == R.id.deteditor_QR) {
-        	Intent intent = new Intent(this, ZBarScannerActivity.class);
-        	intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
-        	startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
+        	//press QRcode Scanner button
+        	doQRcodescanner();
         }
     }
     
+    private void doQRcodescanner(){
+    	//QRcode scanner open
+    	Intent intent = null;
+    	intent = new Intent(this, ZBarScannerActivity.class);
+    	intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
+    	startActivityForResult(intent, Constants.ZBAR_SCANNER_REQUEST);
+    }
+        
     private void doCalculator2() {
         Intent intent = null;
         intent = new Intent(this,Calculator.class);
@@ -404,8 +409,47 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
             }catch(Exception x){
             }
         }
-    }
+        if (resultCode == RESULT_OK) 
+        {	
+        	//get QRcode result           
+        	String result = data.getStringExtra(ZBarConstants.SCAN_RESULT);
+        	noteEditor.setText(lotteryCode(result));
+        	moneyEditor.setText(QRcodeMoney(result));
+        	try {
+				PurchaseDay(result);
+			} catch (ParseException x) {
+			}
 
+        }
+    }
+    
+    private String QRcodeMoney(String QRcode){
+    	//發票金額
+    	int change = Integer.parseInt(QRcode.substring(29,37),16);
+    	String out = String.valueOf(change);
+    	return out;
+    }
+    
+    private String lotteryCode(String QRcode){
+    	//發票號碼
+    	String out = QRcode.substring(0,10);
+    	return out;
+    }
+    
+    private void PurchaseDay(String QRcode) throws ParseException{
+    	//發票日期
+    	String year = QRcode.substring(10,13);
+    	int y = Integer.valueOf(year);
+    	y = y + 1911;
+    	String Wyear = String.valueOf(y);
+    	String M = QRcode.substring(13,15);
+    	String D = QRcode.substring(15,17);
+    	String middle = "-";
+    	String out = Wyear + middle + M + middle + D;
+    	updateDateEditor(Formats.normalizeString2Date(out));
+    	return;
+    }
+    
     private void doOk() {
         // verify
         int fromPos = fromEditor.getSelectedItemPosition();
