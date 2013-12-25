@@ -48,8 +48,6 @@ public class PasswordProtectionActivity extends ContextsActivity implements OnCl
 
     private void doPasswordOk() {
         String password = getContexts().getPrefPassword();
-        
-        RandomCode();
         String passcode = getContexts().getBackUpPassword();
         
         String pd = ((TextView)findViewById(R.id.pdprot_text)).getText().toString();
@@ -74,6 +72,7 @@ public class PasswordProtectionActivity extends ContextsActivity implements OnCl
         dialog.setMessage("請確認手機有可以使用網路，程式會寄送一串編碼至此Android手機的Google帳號信箱中，確定寄送？");
         dialog.setPositiveButton(R.string.cact_ok,new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialoginterface, int i){
+            	RandomCode();
             	getContexts().reloadBackUpPassword(backuppassword);
             	terminal=0;
                 }
