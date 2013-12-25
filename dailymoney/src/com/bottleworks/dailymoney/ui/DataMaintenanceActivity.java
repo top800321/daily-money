@@ -1,5 +1,9 @@
 package com.bottleworks.dailymoney.ui;
 
+/* 102522030
+ * top800321
+ */
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,6 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -72,6 +77,10 @@ public class DataMaintenanceActivity extends ContextsActivity implements OnClick
         findViewById(R.id.datamain_create_default).setOnClickListener(this);
         findViewById(R.id.datamain_clear_folder).setOnClickListener(this);
         findViewById(R.id.datamain_backup_db2sd).setOnClickListener(this);
+        
+        findViewById(R.id.datamain_export_server).setOnClickListener(this);
+        findViewById(R.id.datamain_import_server).setOnClickListener(this);
+        
     }
 
     @Override
@@ -90,7 +99,132 @@ public class DataMaintenanceActivity extends ContextsActivity implements OnClick
             doClearFolder();
         } else if (v.getId() == R.id.datamain_backup_db2sd) {
             doBackupDbToSD();
+        } else if (v.getId() == R.id.datamain_export_server) {
+        	doExportCSVToServer();
+        } else if (v.getId() == R.id.datamain_import_server) {
+        	doImportCSVFromServer();
         }
+    }
+    
+    private void doExportCSVToServer(){
+    	final int workingBookId = getContexts().getWorkingBookId(); 
+        new AlertDialog.Builder(this).setTitle(i18n.string(R.string.qmsg_export_to_server_csv))
+                .setItems(R.array.csv_type_options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, final int which) {
+                        final GUIs.IBusyRunnable job = new GUIs.BusyAdapter() {
+                            int count = -1;
+                            public void onBusyError(Throwable t) {
+                                GUIs.error(DataMaintenanceActivity.this, t);
+                            }
+                            public void onBusyFinish() {
+                                if(count>=0){
+                                    String msg = i18n.string(R.string.msg_csv_exported,Integer.toString(count),"伺服器");
+                                    GUIs.alert(DataMaintenanceActivity.this,msg);
+                                }else{
+                                    GUIs.alert(DataMaintenanceActivity.this,R.string.msg_no_csv);
+                                }
+                            }
+                            @Override
+                            public void run() {
+                                try {
+                                    count = _exportToCSV(which,workingBookId);
+                                    
+                                    AccountManager accountManager = AccountManager.get(getBaseContext());
+                    				// 取得指定 type 的 Account
+                    				android.accounts.Account[] accounts = accountManager.getAccountsByType("com.google");
+                    				for(android.accounts.Account account : accounts){
+                                	ExchageCSVFromServer.checkfolder(account.name);
+                                	ExchageCSVFromServer.UploadCSV("/sdcard/bwDailyMoney/","accounts.csv","http://140.115.52.112:8080/SEProject/UploadBackupFile.php"+"?account="+account.name);
+                                	ExchageCSVFromServer.UploadCSV("/sdcard/bwDailyMoney/","accounts-0.csv","http://140.115.52.112:8080/SEProject/UploadBackupFile.php"+"?account="+account.name);
+                                	ExchageCSVFromServer.UploadCSV("/sdcard/bwDailyMoney/","details.csv","http://140.115.52.112:8080/SEProject/UploadBackupFile.php"+"?account="+account.name);
+                                	ExchageCSVFromServer.UploadCSV("/sdcard/bwDailyMoney/","details-0.csv","http://140.115.52.112:8080/SEProject/UploadBackupFile.php"+"?account="+account.name);                          	
+                    				}
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e.getMessage(),e);
+                                }
+                            }
+                        };
+                        GUIs.doBusy(DataMaintenanceActivity.this, job);
+                    }
+                }).show();
+    }
+    
+    private void doImportCSVFromServer(){
+    	final int workingBookId = getContexts().getWorkingBookId(); 
+    	final GUIs.IBusyRunnable job = new GUIs.BusyAdapter() {
+            @Override
+            public void onBusyFinish() {
+                GUIs.alert(DataMaintenanceActivity.this, i18n.string(R.string.import_from_server_csv,workingFolder));
+            }
+
+            @Override
+            public void run() {
+                File sd = Environment.getExternalStorageDirectory();
+                File folder = new File(sd, workingFolder);
+                if (!folder.exists()) {
+                	try {
+						_exportToCSV(0,workingBookId);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+                	AccountManager accountManager = AccountManager.get(getBaseContext());
+    				// 取得指定 type 的 Account
+    				android.accounts.Account[] accounts = accountManager.getAccountsByType("com.google");
+    				for(android.accounts.Account account : accounts){
+    					ExchageCSVFromServer.DownloadCSV("/sdcard/bwDailyMoney/","accounts.csv","http://140.115.52.112:8080/SEProject/uploads/"+account.name+"/accounts.csv");
+    					ExchageCSVFromServer.DownloadCSV("/sdcard/bwDailyMoney/","accounts-0.csv","http://140.115.52.112:8080/SEProject/uploads/"+account.name+"/accounts-0.csv");
+    					ExchageCSVFromServer.DownloadCSV("/sdcard/bwDailyMoney/","details.csv","http://140.115.52.112:8080/SEProject/uploads/"+account.name+"/details.csv");
+    					ExchageCSVFromServer.DownloadCSV("/sdcard/bwDailyMoney/","details-0.csv","http://140.115.52.112:8080/SEProject/uploads/"+account.name+"/details-0.csv");
+    					try {
+							_importFromCSV(0,workingBookId);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+    				}
+                    return;
+                }
+                for(File f: folder.listFiles()){
+                   String fnm = f.getName().toLowerCase();
+                   if(f.isFile() && (fnm.endsWith(".csv")||fnm.endsWith(".bak"))){
+                       f.delete();
+                   }
+                }
+                try {
+					_exportToCSV(0,workingBookId);
+                   } catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+                   }
+                   AccountManager accountManager = AccountManager.get(getBaseContext());
+   					// 取得指定 type 的 Account
+   					android.accounts.Account[] accounts = accountManager.getAccountsByType("com.google");
+   					for(android.accounts.Account account : accounts){
+					ExchageCSVFromServer.DownloadCSV("/sdcard/bwDailyMoney/","accounts.csv","http://140.115.52.112:8080/SEProject/uploads/"+account.name+"/accounts.csv");
+					ExchageCSVFromServer.DownloadCSV("/sdcard/bwDailyMoney/","accounts-0.csv","http://140.115.52.112:8080/SEProject/uploads/"+account.name+"/accounts-0.csv");
+					ExchageCSVFromServer.DownloadCSV("/sdcard/bwDailyMoney/","details.csv","http://140.115.52.112:8080/SEProject/uploads/"+account.name+"/details.csv");
+					ExchageCSVFromServer.DownloadCSV("/sdcard/bwDailyMoney/","details-0.csv","http://140.115.52.112:8080/SEProject/uploads/"+account.name+"/details-0.csv");
+					try {
+						_importFromCSV(0,workingBookId);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+   					}
+            }
+        };
+
+        GUIs.confirm(this, i18n.string(R.string.qmsg_import_from_server_csv,workingFolder), new GUIs.OnFinishListener() {
+            @Override
+            public boolean onFinish(Object data) {
+                if (((Integer) data).intValue() == GUIs.OK_BUTTON) {
+                    GUIs.doBusy(DataMaintenanceActivity.this, job);
+                }
+                return true;
+            }
+        });
     }
 
     private void doBackupDbToSD() {
@@ -130,7 +264,7 @@ public class DataMaintenanceActivity extends ContextsActivity implements OnClick
         final GUIs.IBusyRunnable job = new GUIs.BusyAdapter() {
             @Override
             public void onBusyFinish() {
-                GUIs.alert(DataMaintenanceActivity.this, i18n.string(R.string.msg_folder_cleared,workingFolder));
+                GUIs.alert(DataMaintenanceActivity.this, i18n.string(R.string.import_from_server_csv,workingFolder));
             }
 
             @Override

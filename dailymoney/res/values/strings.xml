@@ -90,6 +90,8 @@
     <string name="label_reset">Reset data</string>
     <string name="label_create_default">Create default data(account)</string>
     
+    <string name="label_export_server">Export CSV to Server</string>
+    <string name="label_import_server">Import CSV from Server</string>
     
     <string name="msg_csv_exported">Data (%1$s) was all exported to %2$s, </string>
     <string name="msg_csv_imported">Data was imported from %2$s (%1$s)</string>
