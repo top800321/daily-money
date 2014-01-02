@@ -72,7 +72,7 @@ public class MainDesktop extends AbstractDesktop {
                 i18n.string(R.string.dtitem_prefs), R.drawable.dtitem_prefs);
         
         /*Bill - Check*/
-        intent = new Intent(activity, BillList.class);
+        intent = new Intent(activity, BillListActivity.class);
         //intent.putExtra(DetailListActivity.INTENT_MODE, DetailListActivity.MODE_WEEK);
         DesktopItem bill = new DesktopItem(new IntentRun(activity, intent),
                 i18n.string(R.string.bill_award), R.drawable.dtitem_bill_award);

@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.bottleworks.dailymoney.core.R;
 import com.bottleworks.dailymoney.data.Detail;
 
-public class BillList extends Activity {
+public class BillListActivity extends Activity {
 	private ListView Bill_list;
 	private ArrayAdapter<String> adapter;
 	private String text;
@@ -54,7 +54,7 @@ public class BillList extends Activity {
 	inStream.close();
 	
 	text = stream.toString();
-	Toast.makeText(BillList.this,"Loaded",Toast.LENGTH_LONG).show();
+	Toast.makeText(BillListActivity.this,"Loaded",Toast.LENGTH_LONG).show();
 	} catch (FileNotFoundException e) {
 	e.printStackTrace();
 	}
