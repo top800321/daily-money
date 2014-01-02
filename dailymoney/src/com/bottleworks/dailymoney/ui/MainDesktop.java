@@ -1,4 +1,9 @@
 package com.bottleworks.dailymoney.ui;
+/**
+ * 102522088	
+ * ¶À«Ø¾±
+ */
+
 
 import java.util.Date;
 
@@ -66,6 +71,12 @@ public class MainDesktop extends AbstractDesktop {
         DesktopItem prefdt = new DesktopItem(new ActivityRun(activity, PrefsActivity.class),
                 i18n.string(R.string.dtitem_prefs), R.drawable.dtitem_prefs);
         
+        /*Bill - Check*/
+        intent = new Intent(activity, BillList.class);
+        //intent.putExtra(DetailListActivity.INTENT_MODE, DetailListActivity.MODE_WEEK);
+        DesktopItem bill = new DesktopItem(new IntentRun(activity, intent),
+                i18n.string(R.string.bill_award), R.drawable.dtitem_bill_award);
+        
         intent = new Intent(activity, LocalWebViewActivity.class);
         intent.putExtra(LocalWebViewActivity.INTENT_URI_ID, R.string.path_how2use);
         DesktopItem how2use = new DesktopItem(new IntentRun(activity, intent),
@@ -84,10 +95,11 @@ public class MainDesktop extends AbstractDesktop {
         addItem(datamaindt);
         addItem(prefdt);
         addItem(bookmgntdt);
-        
+                
         addItem(how2use);
         
         addItem(aboutdt);
+        addItem(bill);
     }
 
 }

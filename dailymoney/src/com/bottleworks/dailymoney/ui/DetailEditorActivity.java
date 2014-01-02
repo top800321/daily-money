@@ -1,5 +1,11 @@
 package com.bottleworks.dailymoney.ui;
-
+/*
+ * 102522088
+ * 黃建勳
+ */
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -37,8 +43,10 @@ import com.bottleworks.dailymoney.ui.AccountUtil.IndentNode;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
+
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+
 import net.sourceforge.zbar.Symbol;
 /**
  * Edit or create a detail
@@ -394,6 +402,10 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         startActivityForResult(intent,Constants.REQUEST_CALCULATOR_CODE);
     }
     
+    String FileName = "bill's list";
+    String Bill_Num = null;
+
+    
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -411,17 +423,43 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         }
         if (resultCode == RESULT_OK) 
         {	
+        	
         	//get QRcode result           
         	String result = data.getStringExtra(ZBarConstants.SCAN_RESULT);
         	noteEditor.setText(lotteryCode(result));
         	moneyEditor.setText(QRcodeMoney(result));
+        	Bill_Num = lotteryCode(result);
+        	
+        	//save bill data
+        	save();
+        	
         	try {
 				PurchaseDay(result);
 			} catch (ParseException x) {
 			}
 
         }
+               
     }
+    
+    public void save()
+    {
+    try {
+    FileOutputStream outStream=this.openFileOutput("BILL'S LIST.txt",Context.MODE_APPEND + Context.MODE_WORLD_READABLE);
+    String change = "\n";
+    Bill_Num = Bill_Num + change;
+    outStream.write(Bill_Num.getBytes());
+    outStream.close();
+    Toast.makeText(DetailEditorActivity.this,"Saved",Toast.LENGTH_LONG).show();
+    } catch (FileNotFoundException e) {
+    return;
+    }
+    catch (IOException e){
+    return ;
+    }
+    }
+    
+    
     
     private String QRcodeMoney(String QRcode){
     	//發票金額
@@ -430,11 +468,14 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
     	return out;
     }
     
+    
+    
     private String lotteryCode(String QRcode){
     	//發票號碼
     	String out = QRcode.substring(0,10);
     	return out;
     }
+    
     
     private void PurchaseDay(String QRcode) throws ParseException{
     	//發票日期
