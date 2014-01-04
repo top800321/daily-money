@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -34,11 +35,14 @@ import com.bottleworks.dailymoney.data.Detail;
 import com.bottleworks.dailymoney.data.IDataProvider;
 import com.bottleworks.dailymoney.ui.AccountUtil.IndentNode;
 
+import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
+
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+
 import net.sourceforge.zbar.Symbol;
 /**
  * Edit or create a detail
@@ -417,16 +421,38 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         {	
         	//get QRcode result           
         	String result = data.getStringExtra(ZBarConstants.SCAN_RESULT);
-        	QREditor.setText(lotteryCode(result));
-        	moneyEditor.setText(QRcodeMoney(result));
-        	try {
-				PurchaseDay(result);
-			} catch (ParseException x) {
-			}
-
+        	String prev = noteEditor.getText().toString();
+        	String all;
+        	if (result.substring(0,2).equals("**")){  
+        		if("".equals(prev.trim())){
+        			noteEditor.setText(result.substring(3));
+        		}else{
+        			all = prev + "\n" + result.substring(3);
+        			noteEditor.setText(all);
+        		}
+        	}else{
+        		String Next = goodDetail(result);
+        		if("".equals(prev.trim())){
+        			noteEditor.setText(Next);
+        		}else{
+        			all = prev + "\n" +  Next;
+        			noteEditor.setText(all);
+        		}
+        		QREditor.setText(lotteryCode(result));
+        		moneyEditor.setText(QRcodeMoney(result));
+        		try {
+    				PurchaseDay(result);
+    			} catch (ParseException x) {
+    			}
+        	}
+        	
         }
     }
     
+    private String goodDetail(String QRcode){
+    	String out = QRcode.substring(95);
+    	return out;
+    }
     private String QRcodeMoney(String QRcode){
     	//µo²¼ª÷ÃB
     	int change = Integer.parseInt(QRcode.substring(29,37),16);
