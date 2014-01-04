@@ -76,6 +76,8 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
 
     private SimpleAdapter fromAccountAdapter;
     private SimpleAdapter toAccountAdapter;
+    
+    String Bill_Num = null;
 
 
     @Override
@@ -161,6 +163,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         if (modeCreate) {
             okBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_add, 0, 0, 0);
             okBtn.setText(R.string.cact_create);
+        	//save bill data
         } else {
             okBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_update, 0, 0, 0);
             okBtn.setText(R.string.cact_update);
@@ -403,7 +406,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
     }
     
     String FileName = "bill's list";
-    String Bill_Num = null;
+    
 
     
     @Override
@@ -426,13 +429,10 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         	
         	//get QRcode result           
         	String result = data.getStringExtra(ZBarConstants.SCAN_RESULT);
-        	noteEditor.setText(lotteryCode(result));
+        	noteEditor.setText(result);
         	moneyEditor.setText(QRcodeMoney(result));
         	Bill_Num = lotteryCode(result);
-        	
-        	//save bill data
         	save();
-        	
         	try {
 				PurchaseDay(result);
 			} catch (ParseException x) {
@@ -446,11 +446,11 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
     {
     try {
     FileOutputStream outStream=this.openFileOutput("BILL'S LIST.txt",Context.MODE_APPEND + Context.MODE_WORLD_READABLE);
-    String change = "\n";
+    String change = ",";
     Bill_Num = Bill_Num + change;
     outStream.write(Bill_Num.getBytes());
     outStream.close();
-    Toast.makeText(DetailEditorActivity.this,"Saved",Toast.LENGTH_LONG).show();
+    Toast.makeText(DetailEditorActivity.this,"Saved",Toast.LENGTH_SHORT).show();
     } catch (FileNotFoundException e) {
     return;
     }
