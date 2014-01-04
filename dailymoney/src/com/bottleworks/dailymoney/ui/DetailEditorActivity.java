@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -40,6 +41,7 @@ import com.bottleworks.dailymoney.data.Detail;
 import com.bottleworks.dailymoney.data.IDataProvider;
 import com.bottleworks.dailymoney.ui.AccountUtil.IndentNode;
 
+import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
@@ -92,7 +94,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
 
     /** clone a detail without id **/
     private Detail clone(Detail detail) {
-        Detail d = new Detail(detail.getFrom(), detail.getTo(), detail.getDate(), detail.getMoney(), detail.getNote());
+        Detail d = new Detail(detail.getFrom(), detail.getTo(), detail.getDate(), detail.getMoney(), detail.getQR(), detail.getNote());
         d.setArchived(detail.isArchived());
         return d;
     }
@@ -105,7 +107,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         
         //issue 51, for direct call from outside action, 
         if(detail==null){
-            detail = new Detail("", "", new Date(), 0D, "");
+            detail = new Detail("", "", new Date(), 0D, "", "");
         }
         
         workingDetail = clone(detail);
@@ -126,6 +128,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
     EditText dateEditor;
     EditText noteEditor;
     EditText moneyEditor;
+    EditText QREditor;
 
     Button okBtn;
     Button cancelBtn;
@@ -146,6 +149,9 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         moneyEditor = (EditText) findViewById(R.id.deteditor_money);
         moneyEditor.setText(workingDetail.getMoney()<=0?"":Formats.double2String(workingDetail.getMoney()));
         moneyEditor.setEnabled(!archived);
+        
+        QREditor = (EditText) findViewById(R.id.deteditor_QR_Code);
+        QREditor.setText(workingDetail.getQR());
 
         noteEditor = (EditText) findViewById(R.id.deteditor_note);
         noteEditor.setText(workingDetail.getNote());
@@ -429,19 +435,32 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         	
         	//get QRcode result           
         	String result = data.getStringExtra(ZBarConstants.SCAN_RESULT);
-        	noteEditor.setText(result);
-        	moneyEditor.setText(QRcodeMoney(result));
-        	Bill_Num = lotteryCode(result);
-        	save();
-        	try {
-				PurchaseDay(result);
-			} catch (ParseException x) {
-			}
-
+        	String prev = noteEditor.getText().toString();
+        	String all;
+        	if (result.substring(0,2).equals("**")){  
+        		if("".equals(prev.trim())){
+        			noteEditor.setText(result.substring(3));
+        		}else{
+        			all = prev + "\n" + result.substring(3);
+        			noteEditor.setText(all);
+        		}
+        	}else{
+        		String Next = goodDetail(result);
+        		if("".equals(prev.trim())){
+        			noteEditor.setText(Next);
+        		}else{
+        			all = prev + "\n" +  Next;
+        			noteEditor.setText(all);
+        		}
+        		QREditor.setText(lotteryCode(result));
+        		moneyEditor.setText(QRcodeMoney(result));
+        		try {
+    				PurchaseDay(result);
+    			} catch (ParseException x) {
+    			}
+        	}
         }
-               
-    }
-    
+        }
     public void save()
     {
     try {
@@ -457,10 +476,12 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
     catch (IOException e){
     return ;
     }
+    
     }
-    
-    
-    
+    private String goodDetail(String QRcode){
+    	String out = QRcode.substring(95);
+    	return out;
+    }
     private String QRcodeMoney(String QRcode){
     	//µo²¼ª÷ÃB
     	int change = Integer.parseInt(QRcode.substring(29,37),16);
@@ -534,6 +555,8 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         }
         
         String note = noteEditor.getText().toString();
+        
+        String QR = QREditor.getText().toString();
 
         Account fromAcc = fromAccountList.get(fromPos).getAccount();
         Account toAcc =  toAccountList.get(toPos).getAccount();
@@ -550,6 +573,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
 
         workingDetail.setDate(date);
         workingDetail.setMoney(money);
+        workingDetail.setQR(QR.trim());
         workingDetail.setNote(note.trim());
         IDataProvider idp = getContexts().getDataProvider();
         if (modeCreate) {
@@ -562,6 +586,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
             workingDetail.setNote("");
             moneyEditor.setText("");
             moneyEditor.requestFocus();
+            QREditor.setText("");
             noteEditor.setText("");
             counterCreate++;
             okBtn.setText(i18n.string(R.string.cact_create) + "(" + counterCreate + ")");
