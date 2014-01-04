@@ -376,11 +376,11 @@ public class DataMaintenanceActivity extends ContextsActivity implements OnClick
         if(detail){
             sw = new StringWriter();
             csvw = new CsvWriter(sw, ',');
-            csvw.writeRecord(new String[]{"id","from","to","date","value","note","archived",APPVER+vercode});
+            csvw.writeRecord(new String[]{"id","from","to","date","value","QR","note","archived",APPVER+vercode});
             for (Detail d : idp.listAllDetail()) {
                 count++;
                 csvw.writeRecord(new String[] { Integer.toString(d.getId()), d.getFrom(), d.getTo(),
-                        Formats.normalizeDate2String(d.getDate()), Formats.normalizeDouble2String(d.getMoney()),
+                        Formats.normalizeDate2String(d.getDate()), Formats.normalizeDouble2String(d.getMoney()),d.getQR(),
                         d.getNote(),d.isArchived()?"1":"0"});
             }
             csvw.close();
