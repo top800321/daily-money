@@ -440,16 +440,18 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         	if (result.substring(0,2).equals("**")){  
         		if("".equals(prev.trim())){
         			noteEditor.setText(result.substring(3));
-        		}else{
+        		}
+        		else{
         			all = prev + "\n" + result.substring(3);
         			noteEditor.setText(all);
         		}
-        	}else{
-        		String Next = goodDetail(result);
+        	}
+        	else{
         		if("".equals(prev.trim())){
-        			noteEditor.setText(Next);
-        		}else{
-        			all = prev + "\n" +  Next;
+        			noteEditor.setText(goodDetail(result));
+        		}
+        		else{
+        			all = prev + "\n" +  goodDetail(result);
         			noteEditor.setText(all);
         		}
         		QREditor.setText(lotteryCode(result));
@@ -460,7 +462,8 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
     			}
         	}
         }
-        }
+    }
+    
     public void save()
     {
     try {
