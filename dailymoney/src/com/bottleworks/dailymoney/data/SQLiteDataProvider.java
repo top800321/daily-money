@@ -211,7 +211,9 @@ public class SQLiteDataProvider implements IDataProvider {
                 det.setMoney(c.getDouble(i));
             } else if (n.equals(COL_DET_ARCHIVED)) {
                 det.setArchived((c.getInt(i) == 1));
-            } else if (n.equals(COL_DET_NOTE)) {
+            } else if (n.equals(COL_DET_QR)) {
+                det.setQR(c.getString(i));
+            }else if (n.equals(COL_DET_NOTE)) {
                 det.setNote(c.getString(i));
             }
             i++;
@@ -227,6 +229,7 @@ public class SQLiteDataProvider implements IDataProvider {
         values.put(COL_DET_DATE, calHelper.toDayMiddle(det.getDate()).getTime());
         values.put(COL_DET_MONEY, det.getMoney());
         values.put(COL_DET_ARCHIVED, det.isArchived() ? 1 : 0);
+        values.put(COL_DET_QR, det.getQR());
         values.put(COL_DET_NOTE, det.getNote());
     }
 

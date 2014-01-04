@@ -82,7 +82,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
 
     /** clone a detail without id **/
     private Detail clone(Detail detail) {
-        Detail d = new Detail(detail.getFrom(), detail.getTo(), detail.getDate(), detail.getMoney(), detail.getNote());
+        Detail d = new Detail(detail.getFrom(), detail.getTo(), detail.getDate(), detail.getMoney(), detail.getQR(), detail.getNote());
         d.setArchived(detail.isArchived());
         return d;
     }
@@ -95,7 +95,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         
         //issue 51, for direct call from outside action, 
         if(detail==null){
-            detail = new Detail("", "", new Date(), 0D, "");
+            detail = new Detail("", "", new Date(), 0D, "", "");
         }
         
         workingDetail = clone(detail);
@@ -116,6 +116,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
     EditText dateEditor;
     EditText noteEditor;
     EditText moneyEditor;
+    EditText QREditor;
 
     Button okBtn;
     Button cancelBtn;
@@ -136,6 +137,9 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         moneyEditor = (EditText) findViewById(R.id.deteditor_money);
         moneyEditor.setText(workingDetail.getMoney()<=0?"":Formats.double2String(workingDetail.getMoney()));
         moneyEditor.setEnabled(!archived);
+        
+        QREditor = (EditText) findViewById(R.id.deteditor_QR_Code);
+        QREditor.setText(workingDetail.getQR());
 
         noteEditor = (EditText) findViewById(R.id.deteditor_note);
         noteEditor.setText(workingDetail.getNote());
@@ -413,7 +417,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         {	
         	//get QRcode result           
         	String result = data.getStringExtra(ZBarConstants.SCAN_RESULT);
-        	noteEditor.setText(lotteryCode(result));
+        	QREditor.setText(lotteryCode(result));
         	moneyEditor.setText(QRcodeMoney(result));
         	try {
 				PurchaseDay(result);
@@ -493,6 +497,8 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         }
         
         String note = noteEditor.getText().toString();
+        
+        String QR = QREditor.getText().toString();
 
         Account fromAcc = fromAccountList.get(fromPos).getAccount();
         Account toAcc =  toAccountList.get(toPos).getAccount();
@@ -509,6 +515,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
 
         workingDetail.setDate(date);
         workingDetail.setMoney(money);
+        workingDetail.setQR(QR.trim());
         workingDetail.setNote(note.trim());
         IDataProvider idp = getContexts().getDataProvider();
         if (modeCreate) {
@@ -521,6 +528,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
             workingDetail.setNote("");
             moneyEditor.setText("");
             moneyEditor.requestFocus();
+            QREditor.setText("");
             noteEditor.setText("");
             counterCreate++;
             okBtn.setText(i18n.string(R.string.cact_create) + "(" + counterCreate + ")");

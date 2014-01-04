@@ -501,7 +501,7 @@ public class DataMaintenanceActivity extends ContextsActivity implements OnClick
                 
                 idp.deleteAllDetail();
                 while(detailReader.readRecord()){
-                    Detail det = new Detail(detailReader.get("from"),detailReader.get("to"),Formats.normalizeString2Date(detailReader.get("date")),Formats.normalizeString2Double(detailReader.get("value")),detailReader.get("note"));
+                    Detail det = new Detail(detailReader.get("from"),detailReader.get("to"),Formats.normalizeString2Date(detailReader.get("date")),Formats.normalizeString2Double(detailReader.get("value")),detailReader.get("QR"),detailReader.get("note"));
                     String archived = detailReader.get("archived");
                     if("1".equals(archived)){
                         det.setArchived(true);

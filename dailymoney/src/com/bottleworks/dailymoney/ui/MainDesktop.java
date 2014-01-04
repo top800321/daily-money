@@ -25,7 +25,7 @@ public class MainDesktop extends AbstractDesktop {
 
         DesktopItem adddetdt = new DesktopItem(new Runnable() {
             public void run() {
-                Detail d = new Detail("", "", new Date(), 0D, "");
+                Detail d = new Detail("", "", new Date(), 0D, "", "");
                 Intent intent = null;
                 intent = new Intent(activity,DetailEditorActivity.class);
                 intent.putExtra(DetailEditorActivity.INTENT_MODE_CREATE,true);
