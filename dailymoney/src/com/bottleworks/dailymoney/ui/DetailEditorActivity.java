@@ -79,7 +79,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
     private SimpleAdapter fromAccountAdapter;
     private SimpleAdapter toAccountAdapter;
     
-    String Bill_Num = null;
+    private String Bill_Num;
 
 
     @Override
@@ -456,6 +456,8 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         		}
         		QREditor.setText(lotteryCode(result));
         		moneyEditor.setText(QRcodeMoney(result));
+        		Bill_Num = lotteryCode(result);
+        		save();
         		try {
     				PurchaseDay(result);
     			} catch (ParseException x) {

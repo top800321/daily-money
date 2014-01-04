@@ -7,6 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,18 +26,21 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.bottleworks.commons.util.GUIs;
+import com.bottleworks.dailymoney.context.ContextsActivity;
 import com.bottleworks.dailymoney.core.R;
 import com.bottleworks.dailymoney.data.Detail;
+import com.bottleworks.dailymoney.data.IDataProvider;
 
-public class BillListActivity extends Activity {
+public class BillListActivity extends ContextsActivity  {
 	private ListView Bill_list;
 	private ArrayAdapter<String> adapter;
 	private String text;
 	private JSONArray jsonArray;//server回傳發票號碼
 	private JSONObject jsonData;//接收回傳資料用
 	private String[] bill;
-	private String[] AwardList;
 	private int AWARD_STATE = 0;
+	private int award;
+	final IDataProvider idp = getContexts().getDataProvider();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,40 +48,73 @@ public class BillListActivity extends Activity {
 		setContentView(R.layout.bill_list);
 		Bill_list = (ListView) findViewById(R.id.listView1);
 		adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1);
+		//load();
 		
-		load();
+		
+		List<Detail> data = null;
+		data = idp.listDetail(null,null,getContexts().getPrefMaxRecords());
+		Toast.makeText(Bill_list.getContext(),"到這裡是成功的~~~", Toast.LENGTH_SHORT).show();
+		for (Detail det : data) {
+            det.getQR();
+            if(!"".equals(det.getQR().trim())){
+            	adapter.add(det.getQR());
+            }          	
+        }
+        
+/*
 		connectDB();
-		
+
 		int len = (text.length())/11;
 		bill = text.split(",");
 		
 		
-
+	
 		for(int i = 0;i < len;i++){
-			//AwardNum[i] = bill[i].substring(3, 10);
-			adapter.add(bill[i]);
-		}
-	
-	
-		
-		Bill_list.setAdapter(adapter);
-		
-		Bill_list.setOnItemClickListener(new OnItemClickListener(){
-		       public void onItemClick(AdapterView<?> a, View v, int position, long id){
-		    	   if(AWARD_STATE == 1){
+			if(AWARD_STATE == 1){
 		          //Toast.makeText(v.getContext(),"你選擇的是"+ bill[position], Toast.LENGTH_SHORT).show();
 		          try {
-					Toast.makeText(v.getContext(),"特獎1000號碼為"+jsonData.getString("special1000"), Toast.LENGTH_SHORT).show();
+		        	  //Toast.makeText(v.getContext(),"start!!", Toast.LENGTH_SHORT).show();
+		        	  award = check2to6(jsonData.getString("first1"),jsonData.getString("first2"),jsonData.getString("first3"),bill[i].substring(2, 10));
+		        	  if(check1(jsonData.getString("special200"),bill[i].substring(2, 10)) != 7)
+		        	  award = check1(jsonData.getString("special200"),bill[i].substring(2, 10));
+		        	  if(checkBig(jsonData.getString("special1000"),bill[i].substring(2, 10)) != 7)
+		        	  award = checkBig(jsonData.getString("special1000"),bill[i].substring(2, 10));
+		        	  if(checkBonus(jsonData.getString("six1"),jsonData.getString("six2"),bill[i].substring(2, 10)) != 7)
+		        	  award = checkBonus(jsonData.getString("six1"),jsonData.getString("six2"),bill[i].substring(2, 10));
+		        	  
 		          } catch (JSONException e) {
 					// TODO 自動產生的 catch 區塊
 					e.printStackTrace();
 		          }
 		    	   }else{
+		    		   Toast.makeText(Bill_list.getContext(),"讀取資料中，請稍候再試", Toast.LENGTH_SHORT).show();  
+		    	   }
+		    	   
+		    	   bill[i] = bill[i] + "  嘿嘿你的發票中 " +Integer.toString(award)+" 獎";
+			
+			adapter.add(bill[i]);
+		}
+		
+		
+		Bill_list.setOnItemClickListener(new OnItemClickListener(){
+		       public void onItemClick(AdapterView<?> a, View v, int position, long id){
+		    	   if(AWARD_STATE == 1){
+		    		   try {
+						Toast.makeText(Bill_list.getContext(),bill[position].substring(2, 10)+"  "+jsonData.getString("special1000"), Toast.LENGTH_SHORT).show();
+					} catch (JSONException e) {
+						// TODO 自動產生的 catch 區塊
+						e.printStackTrace();
+					}
+		          
+		    	   }else{
 		    		   Toast.makeText(v.getContext(),"讀取資料中，請稍候再試", Toast.LENGTH_SHORT).show();  
 		    	   }
+
 		    	   }
-		   });
-			
+		   });		
+		*/
+		
+		Bill_list.setAdapter(adapter);
 	}
 	
     
@@ -98,31 +136,6 @@ public class BillListActivity extends Activity {
         GUIs.doBusy(BillListActivity.this, job);
     }
 
-    
-    
-    /*
-    public void GoGoPowerRanger(int i) throws JSONException {  	
-    	
-		Toast.makeText(null,"start!!", Toast.LENGTH_SHORT).show();
-	
-		check2to6(jsonData.getString("first1"),jsonData.getString("first2"),jsonData.getString("first3"),bill[i].substring(2, 10));
-		check1(jsonData.getString("special200"),bill[i].substring(2, 10));
-		checkBig(jsonData.getString("special1000"),bill[i].substring(2, 10));
-		checkBonus(jsonData.getString("six1"),jsonData.getString("six2"),bill[i].substring(2, 10));
-}
-
-
-    
-   public void saveAwardNum() throws JSONException{
-	   AwardList[0] = jsonData.getString("special1000");
-	   AwardList[1] = jsonData.getString("special200");
-	   AwardList[2] = jsonData.getString("first1");
-	   AwardList[3] = jsonData.getString("first2");
-	   AwardList[4] = jsonData.getString("first3");
-	   AwardList[5] = jsonData.getString("six1");
-	   AwardList[6] = jsonData.getString("six2");
-    }
-*/
     private int check2to6(String num1 , String num2 , String num3 , String numCheck){
     	//二到六獎
     	int outcome = 7;	
