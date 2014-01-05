@@ -1,9 +1,3 @@
-/**
- * 102522088 黃建勳
- * 102522013 曾彥綸
- * 102522030 王竣鋒
- * 102522108 王嗣詠
- */
 package com.bottleworks.dailymoney.ui;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -53,10 +47,10 @@ import com.dm.zbar.android.scanner.ZBarScannerActivity;
 
 import net.sourceforge.zbar.Symbol;
 /**
- * Edit or create a detail
- * 
- * @author dennis
- * 
+ * 102522088 黃建勳
+ * 102522013 曾彥綸
+ * 102522030 王竣鋒
+ * 102522108 王嗣詠
  */
 public class DetailEditorActivity extends ContextsActivity implements android.view.View.OnClickListener {
     
@@ -434,45 +428,61 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         }
         if (resultCode == RESULT_OK) 
         {	
-        	
         	//get QRcode result           
         	String result = data.getStringExtra(ZBarConstants.SCAN_RESULT);
-        	String prev = noteEditor.getText().toString();
+        	String prev = noteEditor.getText().toString().trim();
         	String all;
-        	if (result.substring(0,2).equals("**")){  
-        		if("".equals(prev.trim())){
-        			noteEditor.setText(result.substring(3));
+
+        	if(result.trim().length() == 77){
+        		//舊的發票
+        		//日期.錢.發票號碼
+            	QREditor.setText(lotteryCode(result));
+            	moneyEditor.setText(QRcodeMoney(result));
+            	try {
+        			PurchaseDay(result);
+        		} catch (ParseException x) {
+        			
         		}
-        		else{
-        			all = prev + "\n" + result.substring(3);
-        			noteEditor.setText(all);
-        		}
+        	}else{
+        		//新的發票
+        		if(result.substring(0,2).equals("**")){
+        			//抓第二QR
+        			if("".equals(prev)){
+        				noteEditor.setText(result.substring(3).trim());
+        			}
+        			else{
+        				all = prev + "\n" + result.substring(3).trim();
+        				noteEditor.setText(all);
+        			}
+        		}else if(result.substring(0,1).equals(" ")){
+        			//第二個QR有時候會是一堆空格，要判斷一下
+        		}else{
+        			//抓第一QR
+        			if("".equals(prev)){
+        				noteEditor.setText(goodDetail(result));
+        			}
+        			else{
+        				all = prev + "\n" +  goodDetail(result);
+        				noteEditor.setText(all);
+        			}
+        			//日期.錢.發票號碼
+                	QREditor.setText(lotteryCode(result));
+                	moneyEditor.setText(QRcodeMoney(result));
+                	try {
+            			PurchaseDay(result);
+            		} catch (ParseException x) {
+            			
+            		}
+        		}	
         	}
-        	else{
-        		if("".equals(prev.trim())){
-        			noteEditor.setText(goodDetail(result));
-        		}
-        		else{
-        			all = prev + "\n" +  goodDetail(result);
-        			noteEditor.setText(all);
-        		}
-        		QREditor.setText(lotteryCode(result));
-        		moneyEditor.setText(QRcodeMoney(result));
-        		Bill_Num = lotteryCode(result);
-        		try {
-    				PurchaseDay(result);
-    			} catch (ParseException x) {
-    			}
-        	}
+	
         }
     }
-
-    
-
     private String goodDetail(String QRcode){
-    	String out = QRcode.substring(95);
+    	String out = QRcode.substring(95).trim();
     	return out;
     }
+    
     private String QRcodeMoney(String QRcode){
     	//發票金額
     	int change = Integer.parseInt(QRcode.substring(29,37),16);
@@ -487,7 +497,6 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
     	String out = QRcode.substring(0,10);
     	return out;
     }
-    
     
     private void PurchaseDay(String QRcode) throws ParseException{
     	//發票日期
