@@ -1,5 +1,7 @@
 package com.bottleworks.dailymoney.ui;
-
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -34,17 +37,20 @@ import com.bottleworks.dailymoney.data.Detail;
 import com.bottleworks.dailymoney.data.IDataProvider;
 import com.bottleworks.dailymoney.ui.AccountUtil.IndentNode;
 
+import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
+
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
+
 import net.sourceforge.zbar.Symbol;
 /**
- * Edit or create a detail
- * 
- * @author dennis
- * 
+ * 102522088 黃建勳
+ * 102522013 曾彥綸
+ * 102522030 王竣鋒
+ * 102522108 王嗣詠
  */
 public class DetailEditorActivity extends ContextsActivity implements android.view.View.OnClickListener {
     
@@ -68,6 +74,8 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
 
     private SimpleAdapter fromAccountAdapter;
     private SimpleAdapter toAccountAdapter;
+    
+    private String Bill_Num;
 
 
     @Override
@@ -82,7 +90,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
 
     /** clone a detail without id **/
     private Detail clone(Detail detail) {
-        Detail d = new Detail(detail.getFrom(), detail.getTo(), detail.getDate(), detail.getMoney(), detail.getNote());
+        Detail d = new Detail(detail.getFrom(), detail.getTo(), detail.getDate(), detail.getMoney(), detail.getQR(), detail.getNote());
         d.setArchived(detail.isArchived());
         return d;
     }
@@ -95,7 +103,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         
         //issue 51, for direct call from outside action, 
         if(detail==null){
-            detail = new Detail("", "", new Date(), 0D, "");
+            detail = new Detail("", "", new Date(), 0D, "", "");
         }
         
         workingDetail = clone(detail);
@@ -116,6 +124,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
     EditText dateEditor;
     EditText noteEditor;
     EditText moneyEditor;
+    EditText QREditor;
 
     Button okBtn;
     Button cancelBtn;
@@ -136,6 +145,9 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         moneyEditor = (EditText) findViewById(R.id.deteditor_money);
         moneyEditor.setText(workingDetail.getMoney()<=0?"":Formats.double2String(workingDetail.getMoney()));
         moneyEditor.setEnabled(!archived);
+        
+        QREditor = (EditText) findViewById(R.id.deteditor_QR_Code);
+        QREditor.setText(workingDetail.getQR());
 
         noteEditor = (EditText) findViewById(R.id.deteditor_note);
         noteEditor.setText(workingDetail.getNote());
@@ -153,6 +165,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         if (modeCreate) {
             okBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_add, 0, 0, 0);
             okBtn.setText(R.string.cact_create);
+        	//save bill data
         } else {
             okBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_update, 0, 0, 0);
             okBtn.setText(R.string.cact_update);
@@ -394,6 +407,10 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         startActivityForResult(intent,Constants.REQUEST_CALCULATOR_CODE);
     }
     
+    String FileName = "bill's list";
+    
+
+    
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -413,14 +430,57 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         {	
         	//get QRcode result           
         	String result = data.getStringExtra(ZBarConstants.SCAN_RESULT);
-        	noteEditor.setText(lotteryCode(result));
-        	moneyEditor.setText(QRcodeMoney(result));
-        	try {
-				PurchaseDay(result);
-			} catch (ParseException x) {
-			}
+        	String prev = noteEditor.getText().toString().trim();
+        	String all;
 
+        	if(result.trim().length() == 77){
+        		//舊的發票
+        		//日期.錢.發票號碼
+            	QREditor.setText(lotteryCode(result));
+            	moneyEditor.setText(QRcodeMoney(result));
+            	try {
+        			PurchaseDay(result);
+        		} catch (ParseException x) {
+        			
+        		}
+        	}else{
+        		//新的發票
+        		if(result.substring(0,2).equals("**")){
+        			//抓第二QR
+        			if("".equals(prev)){
+        				noteEditor.setText(result.substring(3).trim());
+        			}
+        			else{
+        				all = prev + "\n" + result.substring(3).trim();
+        				noteEditor.setText(all);
+        			}
+        		}else if(result.substring(0,1).equals(" ")){
+        			//第二個QR有時候會是一堆空格，要判斷一下
+        		}else{
+        			//抓第一QR
+        			if("".equals(prev)){
+        				noteEditor.setText(goodDetail(result));
+        			}
+        			else{
+        				all = prev + "\n" +  goodDetail(result);
+        				noteEditor.setText(all);
+        			}
+        			//日期.錢.發票號碼
+                	QREditor.setText(lotteryCode(result));
+                	moneyEditor.setText(QRcodeMoney(result));
+                	try {
+            			PurchaseDay(result);
+            		} catch (ParseException x) {
+            			
+            		}
+        		}	
+        	}
+	
         }
+    }
+    private String goodDetail(String QRcode){
+    	String out = QRcode.substring(95).trim();
+    	return out;
     }
     
     private String QRcodeMoney(String QRcode){
@@ -429,6 +489,8 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
     	String out = String.valueOf(change);
     	return out;
     }
+    
+    
     
     private String lotteryCode(String QRcode){
     	//發票號碼
@@ -493,6 +555,8 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         }
         
         String note = noteEditor.getText().toString();
+        
+        String QR = QREditor.getText().toString();
 
         Account fromAcc = fromAccountList.get(fromPos).getAccount();
         Account toAcc =  toAccountList.get(toPos).getAccount();
@@ -509,6 +573,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
 
         workingDetail.setDate(date);
         workingDetail.setMoney(money);
+        workingDetail.setQR(QR.trim());
         workingDetail.setNote(note.trim());
         IDataProvider idp = getContexts().getDataProvider();
         if (modeCreate) {
@@ -521,6 +586,7 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
             workingDetail.setNote("");
             moneyEditor.setText("");
             moneyEditor.requestFocus();
+            QREditor.setText("");
             noteEditor.setText("");
             counterCreate++;
             okBtn.setText(i18n.string(R.string.cact_create) + "(" + counterCreate + ")");

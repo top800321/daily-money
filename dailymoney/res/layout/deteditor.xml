@@ -45,7 +45,7 @@
                     android:paddingRight="5dp" />
              </LinearLayout>
 			
-			<TextView android:text="@string/label_note" android:layout_width="wrap_content" android:layout_height="wrap_content"
+			<TextView android:text="@string/label_QR" android:layout_width="wrap_content" android:layout_height="wrap_content"
 				android:layout_marginLeft="5dp" />
 
 			<LinearLayout
@@ -54,7 +54,7 @@
 			    android:orientation="horizontal" >
 
 			    <EditText
-			        android:id="@+id/deteditor_note"
+			        android:id="@+id/deteditor_QR_Code"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:layout_marginLeft="20dp"
@@ -69,10 +69,31 @@
 			        android:id="@+id/deteditor_QR"
 			        android:layout_width="42dp"
 			        android:layout_height="match_parent"
-			        android:text="Button" />
-
+			        android:text="QR" />
+			    
 			</LinearLayout>
+			
+			<TextView android:text="@string/label_note" android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="5dp" />
+			
+			<LinearLayout
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:orientation="horizontal" >
+			<EditText
+			        android:id="@+id/deteditor_note"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginLeft="20dp"
+			        android:layout_marginRight="20dp"
+			        android:ems="10"
+			        android:maxLines="10" >
 
+			        <requestFocus />
+			    </EditText>
+			</LinearLayout>
+			
 		</LinearLayout>
 	</ScrollView>
 	<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal"

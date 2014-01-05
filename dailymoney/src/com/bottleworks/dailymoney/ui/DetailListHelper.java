@@ -147,7 +147,7 @@ public class DetailListHelper implements OnItemClickListener{
     }
 
     public void doNewDetail(Date date) {
-        Detail d = new Detail("", "", date == null ? new Date() : date, 0D, "");
+        Detail d = new Detail("", "", date == null ? new Date() : date, 0D, "", "");
         Intent intent = null;
         intent = new Intent(activity,DetailEditorActivity.class);
         intent.putExtra(DetailEditorActivity.INTENT_MODE_CREATE,true);
