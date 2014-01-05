@@ -20,6 +20,9 @@ public class Detail implements Serializable{
     
     private Date date;
     private Double money;
+    
+    private String QR;
+    
     private String note;
     
     private boolean archived;
@@ -27,9 +30,10 @@ public class Detail implements Serializable{
     Detail(){}
 
     public Detail(String from,String to,Date date, Double money,
-            String note) {
+    		String QR,String note) {
         this.date = date;
         this.money = money;
+        this.QR = QR;
         this.note = note;
         setFrom(from);
         setTo(to);
@@ -97,6 +101,14 @@ public class Detail implements Serializable{
 
     public void setMoney(Double money) {
         this.money = money;
+    }
+    
+    public String getQR() {
+        return QR;
+    }
+
+    public void setQR(String QR) {
+        this.QR = QR;
     }
 
     public String getNote() {

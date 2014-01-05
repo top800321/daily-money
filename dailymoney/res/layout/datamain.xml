@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"
+<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"
 	android:layout_width="fill_parent" android:layout_height="fill_parent" android:padding="5dp">
 	<ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent">
 		<LinearLayout android:orientation="vertical"
@@ -9,13 +8,13 @@
 		    <Button android:id="@+id/datamain_backup_db2sd" android:layout_width="fill_parent" android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/btn_update" android:gravity="center" android:text="@string/label_backup_db2sd"
                 android:layout_marginTop="10dp" />
-			<Button android:text="@string/label_export_csv" android:id="@+id/datamain_export_csv" android:layout_width="fill_parent"
-				android:gravity="center" android:layout_height="wrap_content" android:drawableLeft="@drawable/btn_export"/>
-			<Button android:text="@string/label_share_csv" android:id="@+id/datamain_share_csv"
+   <Button android:text="@string/label_export_csv" android:id="@+id/datamain_export_csv" android:layout_width="fill_parent"
+    android:gravity="center" android:layout_height="wrap_content" android:drawableLeft="@drawable/btn_export"/>
+   <Button android:text="@string/label_share_csv" android:id="@+id/datamain_share_csv"
                 android:layout_width="fill_parent" android:gravity="center" android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/btn_share" android:layout_marginBottom="10dp"/>
-			
-			<Button android:text="@string/label_create_default" android:id="@+id/datamain_create_default"
+   
+   <Button android:text="@string/label_create_default" android:id="@+id/datamain_create_default"
                 android:layout_width="fill_parent" android:gravity="center" android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/btn_defdata"></Button>
 			<Button android:text="@string/label_import_csv" android:id="@+id/datamain_import_csv" android:layout_width="fill_parent"

@@ -36,6 +36,7 @@ public class SQLiteDataHelper extends SQLiteOpenHelper{
     + COL_DET_DATE+" INTEGER NOT NULL, "
     + COL_DET_MONEY+" REAL NOT NULL, "
     + COL_DET_ARCHIVED+" INTEGER NOT NULL, "
+    + COL_DET_QR+" TEXT, "
     + COL_DET_NOTE+" TEXT)";
     
     private static final String DET_DROP_SQL = "DROP TABLE IF EXISTS "+TB_DET;

@@ -41,6 +41,9 @@
     <string name="label_money">金錢</string>
     <string name="label_month_details">%1$s (%2$s筆)</string>
     <string name="label_day_details">%1$s (%2$s筆)</string>
+    
+    <string name="label_QR">QR碼</string>
+    
     <string name="label_note">備註</string>
     <string name="label_other">其他</string>
     <string name="label_prefs_detlayout_sum">選擇不同的明細排版</string>

@@ -62,29 +62,29 @@ public class DataCreator {
         int base = 0;
 
         for(int i=0;i<loop;i++){
-            createDetail(income1, asset1, cal.dateBefore(today, base + 3), 5000D, "salary "+i);
-            createDetail(income2, asset2, cal.dateBefore(today, base + 3), 10D, "some where "+i);
+            createDetail(income1, asset1, cal.dateBefore(today, base + 3), 5000D, "12345678", "salary "+i);
+            createDetail(income2, asset2, cal.dateBefore(today, base + 3), 10D, "12345678", "some where "+i);
     
-            createDetail(asset1, expense1, cal.dateBefore(today, base + 2), 100D, "date with Cica "+i);
-            createDetail(asset1, expense1, cal.dateBefore(today,base + 2), 30D, "taiwan food is great "+i);
-            createDetail(asset1, expense2, cal.dateBefore(today,base + 1), 11D, "buy DVD "+i);
-            createDetail(asset1, expense3, cal.dateBefore(today,base + 1), 300D, "it is a secrt  "+i);
+            createDetail(asset1, expense1, cal.dateBefore(today, base + 2), 100D, "12345678", "date with Cica "+i);
+            createDetail(asset1, expense1, cal.dateBefore(today,base + 2), 30D, "12345678", "taiwan food is great "+i);
+            createDetail(asset1, expense2, cal.dateBefore(today,base + 1), 11D, "12345678", "buy DVD "+i);
+            createDetail(asset1, expense3, cal.dateBefore(today,base + 1), 300D, "12345678", "it is a secrt  "+i);
     
-            createDetail(asset1, asset2, cal.dateBefore(today, base+0), 4000D, "deposit  "+i);
-            createDetail(asset2, asset1, cal.dateBefore(today, base+0), 1000D, "drawing  "+i);
+            createDetail(asset1, asset2, cal.dateBefore(today, base+0), 4000D, "12345678", "deposit  "+i);
+            createDetail(asset2, asset1, cal.dateBefore(today, base+0), 1000D, "12345678", "drawing  "+i);
             
-            createDetail(liability1, expense2, cal.dateBefore(today, base+2), 20.9D, "buy Game "+i);
-            createDetail(asset1, liability1, cal.dateBefore(today, base+1), 19.9D, "pay credit card "+i);
-            createDetail(asset1, other1, cal.dateBefore(today, base+1), 1D, "salary to other "+i);
-            createDetail(other1, liability1, cal.dateBefore(today, base+1), 1D, "other pay credit card "+i);
+            createDetail(liability1, expense2, cal.dateBefore(today, base+2), 20.9D, "12345678", "buy Game "+i);
+            createDetail(asset1, liability1, cal.dateBefore(today, base+1), 19.9D, "12345678", "pay credit card "+i);
+            createDetail(asset1, other1, cal.dateBefore(today, base+1), 1D, "12345678", "salary to other "+i);
+            createDetail(other1, liability1, cal.dateBefore(today, base+1), 1D, "12345678", "other pay credit card "+i);
             
             base = base+5;
         }
 
     }
 
-    private Detail createDetail(Account from, Account to, Date date, Double money, String note) {
-        Detail det = new Detail(from.getId(),to.getId(), date, money, note);
+    private Detail createDetail(Account from, Account to, Date date, Double money, String QR, String note) {
+        Detail det = new Detail(from.getId(),to.getId(), date, money, QR, note);
         idp.newDetail(det);
         return det;
     }
