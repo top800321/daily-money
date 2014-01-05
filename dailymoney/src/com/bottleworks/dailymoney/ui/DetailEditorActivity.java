@@ -1,8 +1,10 @@
-package com.bottleworks.dailymoney.ui;
-/*
- * 102522088
- * ¶À«Ø¾±
+/**
+ * 102522088 ¶À«Ø¾±
+ * 102522013 ´¿«Ûºú
+ * 102522030 ¤ýµ¤¾W
+ * 102522108 ¤ý¶àµú
  */
+package com.bottleworks.dailymoney.ui;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -457,7 +459,6 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         		QREditor.setText(lotteryCode(result));
         		moneyEditor.setText(QRcodeMoney(result));
         		Bill_Num = lotteryCode(result);
-        		save();
         		try {
     				PurchaseDay(result);
     			} catch (ParseException x) {
@@ -465,24 +466,9 @@ public class DetailEditorActivity extends ContextsActivity implements android.vi
         	}
         }
     }
+
     
-    public void save()
-    {
-    try {
-    FileOutputStream outStream=this.openFileOutput("BILL'S LIST.txt",Context.MODE_APPEND + Context.MODE_WORLD_READABLE);
-    String change = ",";
-    Bill_Num = Bill_Num + change;
-    outStream.write(Bill_Num.getBytes());
-    outStream.close();
-    Toast.makeText(DetailEditorActivity.this,"Saved",Toast.LENGTH_SHORT).show();
-    } catch (FileNotFoundException e) {
-    return;
-    }
-    catch (IOException e){
-    return ;
-    }
-    
-    }
+
     private String goodDetail(String QRcode){
     	String out = QRcode.substring(95);
     	return out;
