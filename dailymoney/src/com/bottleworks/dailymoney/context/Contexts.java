@@ -411,6 +411,7 @@ public class Contexts {
             String pd2  = prefs.getString(Constants.PREFS_PASSWORDVD, pref_password);
             if(pd1.equals(pd2)){
                 pref_password = pd1;
+                pref_backup_password = pref_password;
             }else{
                 pref_password = "";
             }
